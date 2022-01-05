@@ -9,13 +9,13 @@ describe Oystercard do
   
   describe "#top_up" do
     it { is_expected.to respond_to(:top_up).with(1).argument }
-  
+    
     it "adds a value to the balance" do
-      expect{ subject.top_up 10}.to change{ subject.balance }.by 10
+      expect{ subject.top_up 10 }.to change{ subject.balance }.by 10
     end
 
     it "raises error if balance exceeds maximum value" do
-      maximum_balance = Oystercard::MAXIMUM_VALUE
+      maximum_balance = Oystercard::MAXIMUM_BALANCE
       subject.top_up(maximum_balance)
       expect{ subject.top_up(1) }.to raise_error("Maximum balance of #{maximum_balance} exceeded")
     end
@@ -26,7 +26,13 @@ describe Oystercard do
     
     it "deducts fare from balance" do
       subject.top_up(20)
-      expect{ subject.deduct 10}.to change{ subject.balance }.by -10
+      expect{ subject.deduct 10 }.to change{ subject.balance }.by -10
+    end
+
+    it "raises error if balance falls below minimum balance" do
+      minimum_balance = Oystercard::MINIMUM_BALANCE
+      subject.top_up(minimum_balance)
+      expect{ subject.deduct 1 }.to raise_error "Insufficient balance"
     end
   end
 
@@ -59,6 +65,5 @@ describe Oystercard do
       expect(subject.in_journey?).to eq false
     end
   end
-    # it {expect(subject).to respond_to(:balance) }
   
 end
